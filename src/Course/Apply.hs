@@ -113,7 +113,7 @@ flBindReader f g t = g (f t) t
 -- Id 15
 --
 -- >>> lift2 (+) (1 :. 2 :. 3 :. Nil) (4 :. 5 :. Nil)
--- [5,6,6,7,7,8]
+-- [5,6,6,7,7,8] - CARTESIAN PRODUCT using lift2
 --
 -- >>> lift2 (+) (Full 7) (Full 8)
 -- Full 15
@@ -126,14 +126,8 @@ flBindReader f g t = g (f t) t
 --
 -- >>> lift2 (+) length sum (listh [4,5,6])
 -- 18
-lift2 ::
-  Apply f =>
-  (a -> b -> c)
-  -> f a
-  -> f b
-  -> f c
-lift2 =
-  error "todo: Course.Apply#lift2"
+lift2 :: Apply f => (a -> b -> c) -> f a -> f b -> f c
+lift2 f a b = f <$> a <*> b
 
 -- | Apply a ternary function in the environment.
 --
