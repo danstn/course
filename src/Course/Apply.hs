@@ -39,10 +39,31 @@ instance Apply Id where
 -- [2,3,4,2,4,6]
 instance Apply List where
   (<*>) :: List (a -> b) -> List a -> List b
-  _ <*> Nil = Nil
-  Nil <*> _ = Nil
-  -- non-overlapping pattern matching (access to the whole list is done via @q)
-  (f :. fs) <*> q@(_:._) = map (\a -> f a) q ++ (fs <*> q) 
+  {-_ <*> Nil = Nil-}
+  {-Nil <*> _ = Nil-}
+  {--- non-overlapping pattern matching (access to the whole list is done using @q)-}
+  {-(f :. fs) <*> q@(_:._) = map (\a -> f a) q ++ (fs <*> q) -}
+  listf <*> lista = 
+    flMap listf (\f -> 
+    flMap lista (\a -> 
+      f a :. Nil))
+  {- Analogy for Scala's for comprehension
+    do
+      f <- listf
+      a <- lista
+      pure (f a)
+  -}
+flMap :: List a -> (a -> List b) -> List b
+flMap = flip flatMap
+
+-- must use only flatMap
+mapAgain :: (a -> b) -> List a -> List b
+mapAgain f x = flatMap(\a -> f a :. Nil) x
+{-mapAgain f x = flatMap(single f) x-}
+
+-- pure, return, unit, my, lift0
+single :: a -> List a
+single a = a :. Nil
 
 -- | Implement @Apply@ instance for @Optional@.
 --
@@ -55,12 +76,11 @@ instance Apply List where
 -- >>> Full (+8) <*> Empty
 -- Empty
 instance Apply Optional where
-  (<*>) ::
-    Optional (a -> b)
-    -> Optional a
-    -> Optional b
-  (<*>) =
-    error "todo: Course.Apply (<*>)#instance Optional"
+  (<*>) :: Optional (a -> b) -> Optional a -> Optional b
+  Full f <*> Full a = Full (f a)
+  Empty <*> _ = Empty
+  _ <*> Empty = Empty
+  
 
 -- | Implement @Apply@ instance for reader.
 --
