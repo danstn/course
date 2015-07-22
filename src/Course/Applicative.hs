@@ -95,8 +95,11 @@ instance Applicative ((->) t) where
 -- lift2, lift3, ...
 -- ~~~ void, ,$ ~~~
 sequence :: Applicative f => List (f a) -> f (List a)
-sequence listfa = 
-  error "todo: Course.Applicative#sequence"
+  -- Using pattern matching
+  {-sequence Nil = pure Nil-}
+  {-sequence (h:.t) = lift2 (:.) h (sequence t)-}
+  -- Using foldRight the awesome
+sequence = foldRight (lift2 (:.)) (pure Nil)
 
 -- | Replicate an effect a given number of times.
 --
