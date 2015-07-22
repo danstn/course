@@ -28,8 +28,7 @@ import qualified Prelude as P
 -- * The law of right identity
 --   `∀x. x <*> pure id ≅ x`
 class Apply f => Applicative f where
-  pure ::
-    a -> f a
+  pure :: a -> f a
 
 -- | Witness that all things with (<*>) and pure also have (<$>).
 --
@@ -41,53 +40,40 @@ class Apply f => Applicative f where
 --
 -- >>> (+1) <$> (1 :. 2 :. 3 :. Nil)
 -- [2,3,4]
-(<$>) ::
-  Applicative f =>
-  (a -> b)
-  -> f a
-  -> f b
-(<$>) =
-  error "todo: Course.Applicative#(<$>)"
+-- Apply :: (<*>)
+-- Applicative :: pure 
+-- NB: If you have pure and apply - you have a Functor
+(<$>) :: Applicative f => (a -> b) -> f a -> f b
+f <$> a = pure f <*> a
+
 
 -- | Insert into Id.
 --
 -- prop> pure x == Id x
 instance Applicative Id where
-  pure ::
-    a
-    -> Id a
-  pure =
-    error "todo: Course.Applicative pure#instance Id"
+  pure :: a -> Id a
+  pure = Id
 
 -- | Insert into a List.
 --
 -- prop> pure x == x :. Nil
 instance Applicative List where
-  pure ::
-    a
-    -> List a
-  pure =
-    error "todo: Course.Applicative pure#instance List"
+  pure :: a -> List a
+  pure a = a :. Nil
 
 -- | Insert into an Optional.
 --
 -- prop> pure x == Full x
 instance Applicative Optional where
-  pure ::
-    a
-    -> Optional a
-  pure =
-    error "todo: Course.Applicative pure#instance Optional"
+  pure :: a -> Optional a
+  pure a = Full a
 
 -- | Insert into a constant function.
 --
 -- prop> pure x y == x
 instance Applicative ((->) t) where
-  pure ::
-    a
-    -> ((->) t a)
-  pure =
-    error "todo: Course.Applicative pure#((->) t)"
+  pure :: a -> ((->) t a)
+  pure = const
 
 -- | Sequences a list of structures to a structure of list.
 --
@@ -105,11 +91,11 @@ instance Applicative ((->) t) where
 --
 -- >>> sequence ((*10) :. (+2) :. Nil) 6
 -- [60,8]
-sequence ::
-  Applicative f =>
-  List (f a)
-  -> f (List a)
-sequence =
+-- (<$>), (<*>), pure
+-- lift2, lift3, ...
+-- ~~~ void, ,$ ~~~
+sequence :: Applicative f => List (f a) -> f (List a)
+sequence listfa = 
   error "todo: Course.Applicative#sequence"
 
 -- | Replicate an effect a given number of times.
