@@ -80,7 +80,8 @@ instance Apply Optional where
   Full f <*> Full a = Full (f a)
   Empty <*> _ = Empty
   _ <*> Empty = Empty
-  
+  -- this can be done using a custom bindOpt implementation (see Apply List flMap)
+
 
 -- | Implement @Apply@ instance for reader.
 --
@@ -98,13 +99,13 @@ instance Apply Optional where
 --
 -- >>> ((*) <*> (+2)) 3
 -- 15
+-- See SKI combinator calculus
 instance Apply ((->) t) where
-  (<*>) ::
-    ((->) t (a -> b))
-    -> ((->) t a)
-    -> ((->) t b)
-  (<*>) =
-    error "todo: Course.Apply (<*>)#instance ((->) t)"
+  (<*>) :: (t -> a -> b) -> (t -> a) -> t -> b
+  f <*> g = \t -> f t (g t)
+
+flBindReader :: (t -> a) -> (a -> t -> b) -> t -> b
+flBindReader f g t = g (f t) t
 
 -- | Apply a binary function in the environment.
 --
