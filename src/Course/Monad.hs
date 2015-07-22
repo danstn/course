@@ -10,6 +10,7 @@ import Course.Id
 import Course.List
 import Course.Optional
 import qualified Prelude as P
+{-import Data.String-}
 
 {-
 

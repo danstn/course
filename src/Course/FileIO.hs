@@ -60,43 +60,38 @@ the contents of c
 -}
 
 -- /Tip:/ use @getArgs@ and @run@
-main ::
-  IO ()
+main :: IO ()
 main =
-  error "todo: Course.FileIO#main"
+  getArgs >>= \c -> case c of
+                      Nil -> putStrLn "bad args"
+                      (h:._) -> run h
 
-type FilePath =
-  Chars
+type FilePath = Chars
 
 -- /Tip:/ Use @getFiles@ and @printFiles@.
-run ::
-  Chars
-  -> IO ()
-run =
-  error "todo: Course.FileIO#run"
+run :: FilePath -> IO ()
+run fileName = do
+  c <- readFile fileName
+  l <- getFiles (lines c)
+  printFiles l
 
-getFiles ::
-  List FilePath
-  -> IO (List (FilePath, Chars))
-getFiles =
-  error "todo: Course.FileIO#getFiles"
+-- use getfile, sequence
+getFiles :: List FilePath -> IO (List (FilePath, Chars))
+getFiles = sequence . (<$>) getFile
 
-getFile ::
-  FilePath
-  -> IO (FilePath, Chars)
-getFile =
-  error "todo: Course.FileIO#getFile"
+getFile :: FilePath -> IO (FilePath, Chars)
+getFile = lift2 (<$>) (,) readFile
+  {-do-}
+    {-c <- readFile f-}
+    {-pure (f,c)-}
+  -- ((,) f) <$> readFile f
 
-printFiles ::
-  List (FilePath, Chars)
-  -> IO ()
-printFiles =
-  error "todo: Course.FileIO#printFiles"
+printFiles :: List (FilePath, Chars) -> IO ()
+printFiles = void . sequence . (<$>) (uncurry printFile)
+{-printFiles = void . sequence . ((<$>) (\(n, c) -> printFile n c))-}
+{-printFiles x = void (sequence ((\(f, c) -> printFile f c) <$> x))-}
 
-printFile ::
-  FilePath
-  -> Chars
-  -> IO ()
-printFile =
-  error "todo: Course.FileIO#printFile"
+printFile :: FilePath -> Chars -> IO ()
+printFile p c = putStrLn ("========= " ++ p ++ "\n" ++ c)
+{-printFile p c = putStrLn ("========= " ++ p) >>= \_ -> putStrLn c-}
 

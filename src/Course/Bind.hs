@@ -29,6 +29,10 @@ class Apply f => Bind f where
     (a -> f b)
     -> f a
     -> f b
+    -- fmap :: a -> b
+    -- apply :: f (a -> b)
+    -- bind :: a -> f b
+    -- cobind :: f a -> b
 
 infixr 1 =<<
 
