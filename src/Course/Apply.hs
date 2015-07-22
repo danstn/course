@@ -99,7 +99,7 @@ instance Apply Optional where
 --
 -- >>> ((*) <*> (+2)) 3
 -- 15
--- See SKI combinator calculus
+-- See SKI combinator calculus: Sxyz = xy(yz) - MIND BLOWN!!!!!!!!!!
 instance Apply ((->) t) where
   (<*>) :: (t -> a -> b) -> (t -> a) -> t -> b
   f <*> g = \t -> f t (g t)
