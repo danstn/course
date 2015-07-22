@@ -19,10 +19,7 @@ import qualified Prelude as P
 --   `∀a b c. ((.) <$> a <*> b <*> c) ≅ (a <*> (b <*> c))`
 class Functor f => Apply f where
   -- Pronounced apply.
-  (<*>) ::
-    f (a -> b)
-    -> f a
-    -> f b
+  (<*>) :: f (a -> b) -> f a -> f b
 
 infixl 4 <*>
 
@@ -31,24 +28,21 @@ infixl 4 <*>
 -- >>> Id (+10) <*> Id 8
 -- Id 18
 instance Apply Id where
-  (<*>) ::
-    Id (a -> b)
-    -> Id a
-    -> Id b
-  (<*>) =
-    error "todo: Course.Apply (<*>)#instance Id"
+  (<*>) :: Id (a -> b) -> Id a -> Id b 
+  {-(<*>) f a = Id (f a)-}
+  Id f <*> Id a = Id (f a)
+    {-error "todo: Course.Apply (<*>)#instance Id"-}
 
 -- | Implement @Apply@ instance for @List@.
 --
 -- >>> (+1) :. (*2) :. Nil <*> 1 :. 2 :. 3 :. Nil
 -- [2,3,4,2,4,6]
 instance Apply List where
-  (<*>) ::
-    List (a -> b)
-    -> List a
-    -> List b
-  (<*>) =
-    error "todo: Course.Apply (<*>)#instance List"
+  (<*>) :: List (a -> b) -> List a -> List b
+  _ <*> Nil = Nil
+  Nil <*> _ = Nil
+  -- non-overlapping pattern matching (access to the whole list is done via @q)
+  (f :. fs) <*> q@(_:._) = map (\a -> f a) q ++ (fs <*> q) 
 
 -- | Implement @Apply@ instance for @Optional@.
 --
