@@ -88,8 +88,8 @@ failed = P (\_ -> ErrorResult Failed)
 -- True
 character :: Parser Char -- a is Char in this instance (2nd argument for the Result)
 character = P (\input -> case input of
-              Nil -> ErrorResult UnexpectedEof
-              h:.t -> Result t h)
+                          Nil -> ErrorResult UnexpectedEof
+                          h:.t -> Result t h)
 
 -- | Return a parser that maps any succeeding result with the given function.
 --
@@ -99,8 +99,10 @@ character = P (\input -> case input of
 -- >>> parse (mapParser (+10) (valueParser 7)) ""
 -- Result >< 17
 mapParser :: (a -> b) -> Parser a -> Parser b
-mapParser =
-  error "todo: Course.Parser#mapParser"
+mapParser = error "Not implemented"
+{-mapParser = P $ \input -> case input of-}
+                                {-Nil -> ErrorResult Failed-}
+                                {-_ -> undefined-}
 
 -- | This is @mapParser@ with the arguments flipped.
 -- It might be more helpful to use this function if you prefer this argument order.

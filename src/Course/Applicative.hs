@@ -66,13 +66,13 @@ instance Applicative List where
 -- prop> pure x == Full x
 instance Applicative Optional where
   pure :: a -> Optional a
-  pure a = Full a
+  pure = Full
 
 -- | Insert into a constant function.
 --
 -- prop> pure x y == x
 instance Applicative ((->) t) where
-  pure :: a -> ((->) t a)
+  pure :: a -> t -> a
   pure = const
 
 -- | Sequences a list of structures to a structure of list.
@@ -118,8 +118,9 @@ sequence = foldRight (lift2 (:.)) (pure Nil)
 -- >>> replicateA 3 ['a', 'b', 'c']
 -- ["aaa","aab","aac","aba","abb","abc","aca","acb","acc","baa","bab","bac","bba","bbb","bbc","bca","bcb","bcc","caa","cab","cac","cba","cbb","cbc","cca","ccb","ccc"]
 replicateA :: Applicative f => Int -> f a -> f (List a)
-replicateA n = -- sequence . (replicate n)
-  error "todo: Course.Applicative#replicateA"
+replicateA = undefined
+  -- sequence . (replicate n)
+  {-error "todo: Course.Applicative#replicateA"-}
 
 -- | Filter a list with a predicate that produces an effect.
 --
