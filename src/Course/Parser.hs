@@ -490,8 +490,11 @@ smokerParser = is 'y' ||| is 'n'
 -- >>> parse phoneBodyParser "a123-456"
 -- Result >a123-456< ""
 phoneBodyParser :: Parser Chars
-phoneBodyParser =
-  error "todo: Course.Parser#phoneBodyParser"
+phoneBodyParser = list (digit ||| is '.' ||| is '-')
+{-phoneBodyParser = do c <- digit-}
+                     {-x <- list1 (digit ||| is '.' ||| '-')-}
+                     {-h <- is '#'-}
+                     {-pure (c:.x ++ h)-}
 
 -- | Write a parser for Person.phone.
 --
@@ -510,10 +513,11 @@ phoneBodyParser =
 --
 -- >>> isErrorResult (parse phoneParser "a123-456")
 -- True
-phoneParser ::
-  Parser Chars
-phoneParser =
-  error "todo: Course.Parser#phoneParser"
+phoneParser :: Parser Chars
+phoneParser = do d <- digit
+                 b <- phoneBodyParser
+                 _ <- is '#'
+                 pure (d:.b)
 
 -- | Write a parser for Person.
 --
@@ -560,8 +564,16 @@ phoneParser =
 -- >>> parse personParser "123 Fred Clarkson y 123-456.789# rest"
 -- Result > rest< Person {age = 123, firstName = "Fred", surname = "Clarkson", smoker = 'y', phone = "123-456.789"}
 personParser :: Parser Person
-personParser =
-  error "todo: Course.Parser#personParser"
+personParser = do age <- ageParser
+                  spaces1
+                  firstName <- firstNameParser
+                  spaces1
+                  surname <- surnameParser
+                  spaces1
+                  smoker <- smokerParser
+                  spaces1
+                  phone <- phoneParser
+                  pure (Person age firstName surname smoker phone)
 
 -- Make sure all the tests pass!
 
