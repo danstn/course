@@ -306,8 +306,20 @@ digit = satisfy isDigit
 -- >>> isErrorResult (parse natural "")
 -- True
 natural :: Parser Int
-natural =
-  error "todo: Course.Parser#natural"
+natural = do d <- list1 digit
+             case read d of
+               Empty -> failed
+               Full n -> pure n
+
+{-opt failed pure . read-}
+{-natural = do _ <- list1 digit-}
+              {-opt failed pure read-}
+
+-- catamorphism ~ pattern matching
+-- see maybe in prelude (lowercase m)
+opt :: x -> (a -> x) -> Optional a -> x
+opt e _ Empty = e
+opt _ f (Full a) = f a
 
 --
 -- | Return a parser that produces a space character but fails if
@@ -373,8 +385,8 @@ alpha = satisfy isAlpha
 -- >>> isErrorResult (parse (sequenceParser (character :. is 'x' :. upper :. Nil)) "abCdef")
 -- True
 sequenceParser :: List (Parser a) -> Parser (List a)
-sequenceParser =
-  error "todo: Course.Parser#sequenceParser"
+sequenceParser = sequence
+{-sequenceParser = foldRight (lift2 (:.)) (pure Nil)-}
 
 -- | Return a parser that produces the given number of values off the given parser.
 -- This parser fails if the given parser fails in the attempt to produce the given number of values.
@@ -386,12 +398,9 @@ sequenceParser =
 --
 -- >>> isErrorResult (parse (thisMany 4 upper) "ABcDef")
 -- True
-thisMany ::
-  Int
-  -> Parser a
-  -> Parser (List a)
-thisMany =
-  error "todo: Course.Parser#thisMany"
+-- Parser supports applicative therefore it can be done using replicateA
+thisMany :: Int -> Parser a -> Parser (List a)
+thisMany = replicateA
 
 -- | Write a parser for Person.age.
 --
@@ -407,10 +416,8 @@ thisMany =
 --
 -- >>> isErrorResult (parse ageParser "-120")
 -- True
-ageParser ::
-  Parser Int
-ageParser =
-  error "todo: Course.Parser#ageParser"
+ageParser :: Parser Int
+ageParser = error "todo: Course.Parser#ageParser"
 
 -- | Write a parser for Person.firstName.
 -- /First Name: non-empty string that starts with a capital letter and is followed by zero or more lower-case letters/
