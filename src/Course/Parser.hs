@@ -448,10 +448,11 @@ firstNameParser = do c <- upper
 --
 -- >>> isErrorResult (parse surnameParser "abc")
 -- True
-surnameParser ::
-  Parser Chars
-surnameParser =
-  error "todo: Course.Parser#surnameParser"
+surnameParser :: Parser Chars
+surnameParser = do c <- upper
+                   d <- thisMany 5 lower
+                   e <- list lower
+                   pure (c:.d++e)
 
 -- | Write a parser for Person.smoker.
 --
@@ -467,10 +468,9 @@ surnameParser =
 --
 -- >>> isErrorResult (parse smokerParser "abc")
 -- True
-smokerParser ::
-  Parser Char
-smokerParser =
-  error "todo: Course.Parser#smokerParser"
+smokerParser :: Parser Char
+smokerParser = is 'y' ||| is 'n'
+
 
 -- | Write part of a parser for Person#phoneBody.
 -- This parser will only produce a string of digits, dots or hyphens.
@@ -489,8 +489,7 @@ smokerParser =
 --
 -- >>> parse phoneBodyParser "a123-456"
 -- Result >a123-456< ""
-phoneBodyParser ::
-  Parser Chars
+phoneBodyParser :: Parser Chars
 phoneBodyParser =
   error "todo: Course.Parser#phoneBodyParser"
 
