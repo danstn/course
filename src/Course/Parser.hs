@@ -41,6 +41,7 @@ instance Show ParseError where
   show Failed =
     "Parse failed"
 
+-- Error or Chars
 data ParseResult a =
   ErrorResult ParseError
   | Result Input a
@@ -88,8 +89,8 @@ failed = P (\_ -> ErrorResult Failed)
 -- True
 character :: Parser Char -- a is Char in this instance (2nd argument for the Result)
 character = P (\input -> case input of
-                          Nil -> ErrorResult UnexpectedEof
-                          h:.t -> Result t h)
+              Nil -> ErrorResult UnexpectedEof
+              h:.t -> Result t h)
 
 -- | Return a parser that maps any succeeding result with the given function.
 --
@@ -99,10 +100,15 @@ character = P (\input -> case input of
 -- >>> parse (mapParser (+10) (valueParser 7)) ""
 -- Result >< 17
 mapParser :: (a -> b) -> Parser a -> Parser b
-mapParser = error "Not implemented"
-{-mapParser = P $ \input -> case input of-}
-                                {-Nil -> ErrorResult Failed-}
-                                {-_ -> undefined-}
+-- Parser b ~ Input -> (Either ParseError 
+mapParser f p = 
+  P (\input -> case parse p input of
+    ErrorResult e -> ErrorResult e
+    Result rest a -> Result rest (f a))
+{-mapParser f (P p) =-}
+  {-P (\input -> case p input of-}
+    {-ErrorResult e -> ErrorResult e-}
+    {-Result rest a -> Result rest (f a))-}
 
 -- | This is @mapParser@ with the arguments flipped.
 -- It might be more helpful to use this function if you prefer this argument order.
@@ -130,21 +136,21 @@ flmapParser = flip mapParser
 --
 -- >>> isErrorResult (parse (bindParser (\c -> if c == 'x' then character else valueParser 'v') character) "x")
 -- True
-bindParser ::
-  (a -> Parser b)
-  -> Parser a
-  -> Parser b
-bindParser =
-  error "todo: Course.Parser#bindParser"
+bindParser :: (a -> Parser b) -> Parser a -> Parser b
+bindParser f p = P (\input -> case parse p input of
+                   ErrorResult e -> ErrorResult e
+                   Result rest a -> parse (f a) rest)
+{-bindParser f p = case p of-}
+                   {-ErrorResult e -> ErrorResult e-}
+                   {-Result rest a -> f <*> a-}
+{-bindParser fn parser = case _ parser of-}
+                         {-ErrorResult _ -> ErrorResult Failed-}
+                         {-Result rest a -> fn a-}
 
 -- | This is @bindParser@ with the arguments flipped.
 -- It might be more helpful to use this function if you prefer this argument order.
-flbindParser ::
-  Parser a
-  -> (a -> Parser b)
-  -> Parser b
-flbindParser =
-  flip bindParser
+flbindParser :: Parser a -> (a -> Parser b) -> Parser b
+flbindParser = flip bindParser
 
 -- | Return a parser that puts its input into the given parser and
 --
@@ -160,12 +166,14 @@ flbindParser =
 --
 -- >>> isErrorResult (parse (character >>> valueParser 'v') "")
 -- True
-(>>>) ::
-  Parser a
-  -> Parser b
-  -> Parser b
-(>>>) =
-  error "todo: Course.Parser#(>>>)"
+(>>>) :: Parser a -> Parser b -> Parser b
+(>>>) p1 p2 = do p1
+                 p2
+{-(>>>) p1 p2 = do _ <- p1-}
+                 {-b <- p2-}
+                 {-pure b-}
+{-(>>>) p1 = flbindParser p1 . const-}
+{-(>>>) p1 p2 = p1 >>= const p2-}
 
 -- | Return a parser that tries the first parser for a successful value.
 --
@@ -233,9 +241,7 @@ list =
 --
 -- >>> isErrorResult (parse (list1 (character *> valueParser 'v')) "")
 -- True
-list1 ::
-  Parser a
-  -> Parser (List a)
+list1 :: Parser a -> Parser (List a)
 list1 =
   error "todo: Course.Parser#list1"
 
@@ -252,9 +258,7 @@ list1 =
 --
 -- >>> isErrorResult (parse (satisfy isUpper) "abc")
 -- True
-satisfy ::
-  (Char -> Bool)
-  -> Parser Char
+satisfy :: (Char -> Bool) -> Parser Char
 satisfy =
   error "todo: Course.Parser#satisfy"
 
@@ -265,8 +269,7 @@ satisfy =
 --   * The produced character is not equal to the given character.
 --
 -- /Tip:/ Use the @satisfy@ function.
-is ::
-  Char -> Parser Char
+is :: Char -> Parser Char
 is =
   error "todo: Course.Parser#is"
 
@@ -277,8 +280,7 @@ is =
 --   * The produced character is not a digit.
 --
 -- /Tip:/ Use the @satisfy@ and @Data.Char#isDigit@ functions.
-digit ::
-  Parser Char
+digit :: Parser Char
 digit =
   error "todo: Course.Parser#digit"
 
@@ -301,8 +303,7 @@ digit =
 --
 -- >>> isErrorResult (parse natural "")
 -- True
-natural ::
-  Parser Int
+natural :: Parser Int
 natural =
   error "todo: Course.Parser#natural"
 
