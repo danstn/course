@@ -222,8 +222,7 @@ infixl 3 |||
 -- >>> parse (list (character *> valueParser 'v')) ""
 -- Result >< ""
 list :: Parser a -> Parser (List a)
-list = undefined
-
+list p = list1 p ||| pure Nil
 -- | Return a parser that produces at least one value from the given parser then
 -- continues producing a list of values from the given parser (to ultimately produce a non-empty list).
 --
@@ -237,9 +236,16 @@ list = undefined
 --
 -- >>> isErrorResult (parse (list1 (character *> valueParser 'v')) "")
 -- True
+-- f is Parser here
+-- (>>=) :: Bind f => f a -> (a -> f b) -> f b 
 list1 :: Parser a -> Parser (List a)
-list1 =
-  error "todo: Course.Parser#list1"
+list1 p = do a <- p
+             b <- list p
+             pure (a:.b)
+  -- or use bind notation:
+  {-p >>= \a ->-}
+    {-list p >>= \b ->-}
+      {-pure (a:.b)-}
 
 -- | Return a parser that produces a character but fails if
 --
