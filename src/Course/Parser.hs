@@ -192,12 +192,11 @@ flbindParser = flip bindParser
 --
 -- >>> parse (failed ||| valueParser 'v') "abc"
 -- Result >abc< 'v'
-(|||) ::
-  Parser a
-  -> Parser a
-  -> Parser a
-(|||) =
-  error "todo: Course.Parser#(|||)"
+(|||) :: Parser a -> Parser a -> Parser a
+P parse1 ||| P parse2 =
+  P (\input -> case parse1 input of 
+    ErrorResult _ -> parse2 input
+    r@(Result _ _) -> r)
 
 infixl 3 |||
 
@@ -222,11 +221,8 @@ infixl 3 |||
 --
 -- >>> parse (list (character *> valueParser 'v')) ""
 -- Result >< ""
-list ::
-  Parser a
-  -> Parser (List a)
-list =
-  error "todo: Course.Parser#list"
+list :: Parser a -> Parser (List a)
+list = undefined
 
 -- | Return a parser that produces at least one value from the given parser then
 -- continues producing a list of values from the given parser (to ultimately produce a non-empty list).
