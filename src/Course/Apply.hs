@@ -216,8 +216,7 @@ lift4 =
   f a
   -> f b
   -> f b
-(*>) =
-  error "todo: Course.Apply#(*>)"
+(*>) = lift2 (const id)
 
 -- | Sequence, discarding the value of the second argument.
 -- Pronounced, left apply.
