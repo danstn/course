@@ -417,7 +417,7 @@ thisMany = replicateA
 -- >>> isErrorResult (parse ageParser "-120")
 -- True
 ageParser :: Parser Int
-ageParser = error "todo: Course.Parser#ageParser"
+ageParser = natural
 
 -- | Write a parser for Person.firstName.
 -- /First Name: non-empty string that starts with a capital letter and is followed by zero or more lower-case letters/
@@ -429,10 +429,10 @@ ageParser = error "todo: Course.Parser#ageParser"
 --
 -- >>> isErrorResult (parse firstNameParser "abc")
 -- True
-firstNameParser ::
-  Parser Chars
-firstNameParser =
-  error "todo: Course.Parser#firstNameParser"
+firstNameParser :: Parser Chars
+firstNameParser = do c <- upper
+                     d <- list1 lower
+                     pure (c:.d)
 
 -- | Write a parser for Person.surname.
 --
