@@ -284,8 +284,7 @@ is = satisfy . (==)
 --
 -- /Tip:/ Use the @satisfy@ and @Data.Char#isDigit@ functions.
 digit :: Parser Char
-digit =
-  error "todo: Course.Parser#digit"
+digit = satisfy isDigit
 
 -- | Return a parser that produces zero or a positive integer but fails if
 --
@@ -318,10 +317,8 @@ natural =
 --   * The produced character is not a space.
 --
 -- /Tip:/ Use the @satisfy@ and @Data.Char#isSpace@ functions.
-space ::
-  Parser Char
-space =
-  error "todo: Course.Parser#space"
+space :: Parser Char
+space = satisfy isSpace
 
 -- | Return a parser that produces one or more space characters
 -- (consuming until the first non-space) but fails if
@@ -331,10 +328,8 @@ space =
 --   * The first produced character is not a space.
 --
 -- /Tip:/ Use the @list1@ and @space@ functions.
-spaces1 ::
-  Parser Chars
-spaces1 =
-  error "todo: Course.Parser#spaces1"
+spaces1 :: Parser Chars
+spaces1 = list1 space
 
 -- | Return a parser that produces a lower-case character but fails if
 --
@@ -343,10 +338,8 @@ spaces1 =
 --   * The produced character is not lower-case.
 --
 -- /Tip:/ Use the @satisfy@ and @Data.Char#isLower@ functions.
-lower ::
-  Parser Char
-lower =
-  error "todo: Course.Parser#lower"
+lower :: Parser Char
+lower = satisfy isLower
 
 -- | Return a parser that produces an upper-case character but fails if
 --
@@ -355,10 +348,8 @@ lower =
 --   * The produced character is not upper-case.
 --
 -- /Tip:/ Use the @satisfy@ and @Data.Char#isUpper@ functions.
-upper ::
-  Parser Char
-upper =
-  error "todo: Course.Parser#upper"
+upper :: Parser Char
+upper = satisfy isUpper
 
 -- | Return a parser that produces an alpha character but fails if
 --
@@ -367,10 +358,8 @@ upper =
 --   * The produced character is not alpha.
 --
 -- /Tip:/ Use the @satisfy@ and @Data.Char#isAlpha@ functions.
-alpha ::
-  Parser Char
-alpha =
-  error "todo: Course.Parser#alpha"
+alpha :: Parser Char
+alpha = satisfy isAlpha
 
 -- | Return a parser that sequences the given list of parsers by producing all their results
 -- but fails on the first failing parser of the list.
@@ -383,9 +372,7 @@ alpha =
 --
 -- >>> isErrorResult (parse (sequenceParser (character :. is 'x' :. upper :. Nil)) "abCdef")
 -- True
-sequenceParser ::
-  List (Parser a)
-  -> Parser (List a)
+sequenceParser :: List (Parser a) -> Parser (List a)
 sequenceParser =
   error "todo: Course.Parser#sequenceParser"
 
