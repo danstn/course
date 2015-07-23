@@ -564,16 +564,24 @@ phoneParser = do d <- digit
 -- >>> parse personParser "123 Fred Clarkson y 123-456.789# rest"
 -- Result > rest< Person {age = 123, firstName = "Fred", surname = "Clarkson", smoker = 'y', phone = "123-456.789"}
 personParser :: Parser Person
-personParser = do age <- ageParser
-                  spaces1
-                  firstName <- firstNameParser
-                  spaces1
-                  surname <- surnameParser
-                  spaces1
-                  smoker <- smokerParser
-                  spaces1
-                  phone <- phoneParser
-                  pure (Person age firstName surname smoker phone)
+personParser =
+  Person <$>
+    ageParser <* spaces1 <*>
+    firstNameParser <* spaces1 <*> 
+    surnameParser <* spaces1 <*> 
+    smokerParser <* spaces1 <*> 
+    phoneParser
+-- No need to use a Monad
+  {-do age <- ageParser-}
+                  {-spaces1-}
+                  {-firstName <- firstNameParser-}
+                  {-spaces1-}
+                  {-surname <- surnameParser-}
+                  {-spaces1-}
+                  {-smoker <- smokerParser-}
+                  {-spaces1-}
+                  {-phone <- phoneParser-}
+                  {-pure (Person age firstName surname smoker phone)-}
 
 -- Make sure all the tests pass!
 
