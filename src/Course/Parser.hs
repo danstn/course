@@ -261,8 +261,9 @@ list1 p = do a <- p
 -- >>> isErrorResult (parse (satisfy isUpper) "abc")
 -- True
 satisfy :: (Char -> Bool) -> Parser Char
-satisfy =
-  error "todo: Course.Parser#satisfy"
+satisfy p = do c <- character 
+               if p c then pure c else unexpectedCharParser c
+
 
 -- | Return a parser that produces the given character but fails if
 --
@@ -272,8 +273,8 @@ satisfy =
 --
 -- /Tip:/ Use the @satisfy@ function.
 is :: Char -> Parser Char
-is =
-  error "todo: Course.Parser#is"
+is = satisfy . (==)
+{-is c = satisfy (== c)-}
 
 -- | Return a parser that produces a character between '0' and '9' but fails if
 --
